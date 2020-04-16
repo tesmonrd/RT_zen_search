@@ -3,7 +3,7 @@ from app import db
 
 class Organizations(db.Model):
     """Define Org table for SQLAlchemy"""
-    __tablename__ = "organizations"
+    __tablename__ = 'organizations'
     _id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String)
     external_id = db.Column(db.String)
@@ -20,7 +20,7 @@ class Organizations(db.Model):
 
 class Users(db.Model):
     """Define User table for SQLAlchemy"""
-    __tablename__ = "users"
+    __tablename__ = 'users'
     _id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String)
     external_id = db.Column(db.String)
@@ -41,18 +41,20 @@ class Users(db.Model):
     suspended = db.Column(db.Boolean)
     role = db.Column(db.String)
 
+    organizations = db.relationship("Organizations", backref=db.backref("organizations", uselist=False))
+
     def __repr__(self):
         return "{}".format(self.name)
 
 
 class Tickets(db.Model):
     """Define Ticket table for SQLAlchemy"""
-    __tablename__ = "tickets"
-    _id = db.Column(db.Integer, primary_key=True)
+    __tablename__ = 'tickets'
+    _id = db.Column(db.String, primary_key=True)
     url = db.Column(db.String)
     external_id = db.Column(db.String)
     created_at = db.Column(db.String)
-    tick_type = db.Column(db.String)
+    type_ = db.Column(db.String)
     subject = db.Column(db.String)
     description = db.Column(db.String)
     priority = db.Column(db.String)
@@ -61,9 +63,12 @@ class Tickets(db.Model):
     assignee_id = db.Column(db.Integer, db.ForeignKey("users._id"))
     organization_id = db.Column(db.Integer, db.ForeignKey("organizations._id"))
     tags = db.Column(db.ARRAY(db.String))
-    has_incedents = db.Column(db.Boolean)
+    has_incidents = db.Column(db.Boolean)
     due_at = db.Column(db.String)
     via = db.Column(db.String)
+
+    users = db.relationship("Users", backref=db.backref("users", uselist=False))
+    organizations = db.relationship("Organizations", backref=db.backref("organizations", uselist=False))
 
     def __repr__(self):
         return "{}".format(self.subject)

@@ -1,10 +1,11 @@
+import os
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy import Column, Integer, String, Boolean, ARRAY
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_utils import database_exists, create_database
 
 
-engine = create_engine('postgresql://localhost/zen_data', echo=True)
+engine = create_engine(os.environ['DATABASE_URL'], echo=False)
 Base = declarative_base()
 
 if not database_exists(engine.url):
@@ -58,11 +59,11 @@ class Users(Base):
 class Tickets(Base):
     """Define User base class for SQLAlchemy"""
     __tablename__ = "tickets"
-    _id = Column(Integer, primary_key=True)
+    _id = Column(String, primary_key=True)
     url = Column(String)
     external_id = Column(String)
     created_at = Column(String)
-    tick_type = Column(String)
+    type_ = Column(String)
     subject = Column(String)
     description = Column(String)
     priority = Column(String)
@@ -71,7 +72,7 @@ class Tickets(Base):
     assignee_id = Column(Integer, ForeignKey("users._id"))
     organization_id = Column(Integer, ForeignKey("organizations._id"))
     tags = Column(ARRAY(String))
-    has_incedents = Column(Boolean)
+    has_incidents = Column(Boolean)
     due_at = Column(String)
     via = Column(String)
 
@@ -80,4 +81,5 @@ class Tickets(Base):
 
 
 # create tables
-Base.metadata.create_all(engine)
+def create_tables():
+    Base.metadata.create_all(engine)
