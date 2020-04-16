@@ -1,15 +1,13 @@
 import os
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy import Column, Integer, String, Boolean, ARRAY
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_utils import database_exists, create_database
 
 
-engine = create_engine(os.environ['DATABASE_URL'], echo=False)
+engine = create_engine(os.environ['DATABASE_URL'], echo=True)
 Base = declarative_base()
-
-if not database_exists(engine.url):
-    create_database(engine.url)
 
 
 class Organizations(Base):

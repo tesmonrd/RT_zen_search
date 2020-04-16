@@ -2,8 +2,9 @@ from app import db
 
 
 class Organizations(db.Model):
-    """Define Org table for SQLAlchemy"""
+    """Define Org query data for data loading/querying in SQLAlchemy."""
     __tablename__ = 'organizations'
+    __mapper_args__ = {'polymorphic_identity': 'organizations'}
     _id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String)
     external_id = db.Column(db.String)
@@ -19,8 +20,9 @@ class Organizations(db.Model):
 
 
 class Users(db.Model):
-    """Define User table for SQLAlchemy"""
+    """Define User query data for data loading/querying in SQLAlchemy."""
     __tablename__ = 'users'
+    __mapper_args__ = {'polymorphic_identity': 'users'}
     _id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String)
     external_id = db.Column(db.String)
@@ -36,20 +38,20 @@ class Users(db.Model):
     email = db.Column(db.String)
     phone = db.Column(db.String)
     signature = db.Column(db.String)
-    organization_id = db.Column(db.Integer, db.ForeignKey("organizations._id"))
+    organization_id = db.Column(db.Integer)
     tags = db.Column(db.ARRAY(db.String))
     suspended = db.Column(db.Boolean)
     role = db.Column(db.String)
 
-    organizations = db.relationship("Organizations", backref=db.backref("organizations", uselist=False))
 
     def __repr__(self):
         return "{}".format(self.name)
 
 
 class Tickets(db.Model):
-    """Define Ticket table for SQLAlchemy"""
+    """Define Ticket query data for data loading/querying in SQLAlchemy."""
     __tablename__ = 'tickets'
+    __mapper_args__ = {'polymorphic_identity': 'tickets'}
     _id = db.Column(db.String, primary_key=True)
     url = db.Column(db.String)
     external_id = db.Column(db.String)
@@ -59,16 +61,14 @@ class Tickets(db.Model):
     description = db.Column(db.String)
     priority = db.Column(db.String)
     status = db.Column(db.String)
-    submitter_id = db.Column(db.Integer, db.ForeignKey("users._id"))
-    assignee_id = db.Column(db.Integer, db.ForeignKey("users._id"))
-    organization_id = db.Column(db.Integer, db.ForeignKey("organizations._id"))
+    submitter_id = db.Column(db.Integer)
+    assignee_id = db.Column(db.Integer)
+    organization_id = db.Column(db.Integer)
     tags = db.Column(db.ARRAY(db.String))
     has_incidents = db.Column(db.Boolean)
     due_at = db.Column(db.String)
     via = db.Column(db.String)
 
-    users = db.relationship("Users", backref=db.backref("users", uselist=False))
-    organizations = db.relationship("Organizations", backref=db.backref("organizations", uselist=False))
-
     def __repr__(self):
         return "{}".format(self.subject)
+

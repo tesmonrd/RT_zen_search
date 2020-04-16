@@ -1937,5 +1937,26 @@
     ],
     "suspended": true,
     "role": "agent"
+  },
+  {
+    "_id": 555,
+    "url": "",
+    "external_id": "",
+    "name": "Null User",
+    "alias": "",
+    "created_at": "",
+    "active": false,
+    "verified": false,
+    "shared": false,
+    "locale": "",
+    "timezone": "",
+    "last_login_at": "",
+    "email": "",
+    "phone": "",
+    "signature": "",
+    "organization_id": null,
+    "tags": [],
+    "suspended": null,
+    "role": null
   }
 ]

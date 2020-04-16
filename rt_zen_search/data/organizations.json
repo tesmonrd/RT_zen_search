@@ -544,5 +544,16 @@
       "Fuentes",
       "Trevino"
     ]
+  },
+  {
+    "_id": 555,
+    "url": "",
+    "external_id": "",
+    "name": "Null company",
+    "domain_names": [],
+    "created_at": "",
+    "details": null,
+    "shared_tickets": null,
+    "tags": []
   }
 ]
