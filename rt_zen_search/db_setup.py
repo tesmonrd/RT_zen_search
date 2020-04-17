@@ -6,7 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_utils import database_exists, create_database
 from rt_zen_search.models import Organizations, Users, Tickets
-from rt_zen_search.db_file_init import create_tables
+from rt_zen_search.db_init import create_tables
 
 
 engine = create_engine(os.environ['DATABASE_URL'], pool_pre_ping=True)
