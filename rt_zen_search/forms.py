@@ -1,13 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, FieldList, TextField, SubmitField, BooleanField
+from wtforms import StringField, IntegerField, FieldList, TextField, SubmitField, SelectField, HiddenField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, URL
 from wtforms.fields.html5 import DateTimeLocalField
 
 
 class GeneralSearchBar(FlaskForm):
     """Contact form."""
-    search = StringField('search')
-    submit = SubmitField('Submit')
+    query_all = StringField('Search All')
+    # submit = SubmitField('Submit')
 
 class OrganizationForm(FlaskForm):
     """Contact form."""
@@ -16,12 +16,15 @@ class OrganizationForm(FlaskForm):
     	URL(message=("Invalid URL format."))])
     external_id = StringField('Organization External ID')
     name = StringField('Name')
-    domain_name = FieldList(StringField('Organization Domain Names'))
-    created_at = DateTimeLocalField('Organization Creation Date', format='%m/%d/%y')
+    domain_names = TextField('Organization Domain Names')
+    created_at = DateTimeLocalField('Organization Creation Date', format='%Y-%m-%d')
     details = TextField('Organization Details contains')
-    shared_tickets = BooleanField('Shared Tickets')
-    tags = FieldList(StringField('Organization Tags'))
-    submit = SubmitField('Submit')
+    shared_tickets = SelectField(
+        choices=[(True, 'True'), (False, 'False'), ('','')],
+        coerce=lambda x: x == 'True'
+    )
+    tags = TextField('Organization Tags')
+    db_table = HiddenField()
 
 
 class UserForm(FlaskForm):
@@ -32,20 +35,34 @@ class UserForm(FlaskForm):
     external_id = StringField('User External ID')
     name = StringField('Name')
     alias = StringField('Alias')
-    domain_name = FieldList(StringField('Organization Domain Names'))
-    created_at = DateTimeLocalField('Organization Creation Date', format='%m/%d/%y')
-    active = BooleanField('Active')
-    verified = BooleanField('Verified')
-    shared = BooleanField('Shared Tickets')
-    locale = StringField('TimeZone')
-    last_login_at = DateTimeLocalField('Last user login', format='%m/%d/%y')
+    created_at = DateTimeLocalField('User Creation Date', format='%Y-%m-%d')
+    active = SelectField(
+        choices=[(True, 'True'), (False, 'False'), ('','')],
+        coerce=lambda x: x == 'True'
+    )
+    verified = SelectField(
+        choices=[(True, 'True'), (False, 'False'), ('','')],
+        coerce=lambda x: x == 'True'
+    )
+    shared = SelectField(
+        choices=[(True, 'True'), (False, 'False'), ('','')],
+        coerce=lambda x: x == 'True'
+    )
+    locale = StringField('Locale')
+    time_zone = StringField('Time Zone')
+    last_login_at = DateTimeLocalField('Last user login', format='%Y-%m-%d')
     email = StringField('Email', [
         Email(message=('Not a valid email address.'))])
     phone = StringField('Phone')
     signature = StringField('Signature')
     organization_id = IntegerField('Orangization ID')
-    tags = FieldList(StringField('Organization Tags'))
-    submit = SubmitField('Submit')
+    suspended = SelectField(
+        choices=[(True, 'True'), (False, 'False'), ('','')],
+        coerce=lambda x: x == 'True'
+    )
+    role = StringField('Role')
+    tags = TextField('User Tags')
+    db_table = HiddenField()
 
 
 class TicketForm(FlaskForm):
@@ -54,7 +71,7 @@ class TicketForm(FlaskForm):
     url = StringField('URL',[
     	URL(message=("Invalid URL format."))])
     external_id = StringField('Ticket External ID')
-    created_at = DateTimeLocalField('Ticket Creation Date', format='%m/%d/%y')
+    created_at = DateTimeLocalField('Ticket Creation Date', format='%Y-%m-%d')
     ticket_type = StringField('Ticket Type')
     subject = StringField('Subject')
     description = TextField('Description')
@@ -63,8 +80,11 @@ class TicketForm(FlaskForm):
     submitter_id = IntegerField('Submitter ID')
     assignee_id = IntegerField('Assignee ID')
     organization_id = IntegerField('Organization ID')
-    tags = FieldList(StringField('Ticket Tags'))
-    has_incidents = BooleanField('Has Incidents?')
-    due_at = DateTimeLocalField('Ticket Due Date', format='%m/%d/%y')
+    tags = TextField('Ticket Tags')
+    has_incidents = SelectField(
+        choices=[(True, 'True'), (False, 'False'), ('','')],
+        coerce=lambda x: x == 'True'
+    )
+    due_at = DateTimeLocalField('Ticket Due Date', format='%Y-%m-%d')
     via = StringField('Via')
-    submit = SubmitField('Submit')
+    db_table = HiddenField()

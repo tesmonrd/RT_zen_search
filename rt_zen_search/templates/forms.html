@@ -5,66 +5,44 @@
 	<div class="mainSearch">
 	{% from "_formhelpers.html" import render_field %}
 		<form method="GET" action="/search">
-		 	<dl>{{ render_field(gen_search.search) }}</dl>
+		 	<dl>{{ render_field(gen_search.query_all) }}</dl>
 		 	<input type=submit>
 		</form>
 	</div>
 	<div class="advancedSearch">
 		<form method="GET" action="/search">
-		 	<dl>
-		 	{{ render_field(org_form.org_id) }}
-		 	{{ render_field(org_form.url) }}
-		 	{{ render_field(org_form.external_id) }}
-		 	{{ render_field(org_form.name) }}
-		 	{{ render_field(org_form.domain_name) }}
-		 	{{ render_field(org_form.created_at) }}
-		 	{{ render_field(org_form.details) }}
-		 	{{ render_field(org_form.shared_tickets) }}
-		 	{{ render_field(org_form.tags) }}
+			<ul>
+		 	{% for field in org_form %}
+		 		{% if field.id != 'csrf_token' %}
+		 			{{ render_field(field)}}
+		 		{% endif %}
+		 	{% endfor %}
+			</ul>
 		 	<input type=submit>
 		 </dl>
 		</form>
 	</div>
 	<div class="advancedSearch">
 		<form method="GET" action="/search">
-		 	<dl>{{ render_field(user_form.user_id) }}</dl>
-		 	<dl>{{ render_field(user_form.url) }}</dl>
-		 	<dl>{{ render_field(user_form.external_id) }}</dl>
-		 	<dl>{{ render_field(user_form.name) }}</dl>
-		 	<dl>{{ render_field(user_form.alias) }}</dl>
-		 	<dl>{{ render_field(user_form.domain_name) }}</dl>
-		 	<dl>{{ render_field(user_form.created_at) }}</dl>
-		 	<dl>{{ render_field(user_form.active) }}</dl>
-		 	<dl>{{ render_field(user_form.verified) }}</dl>
-		 	<dl>{{ render_field(user_form.shared) }}</dl>
-		 	<dl>{{ render_field(user_form.locale) }}</dl>
-		 	<dl>{{ render_field(user_form.last_login_at) }}</dl>
-		 	<dl>{{ render_field(user_form.email) }}</dl>
-		 	<dl>{{ render_field(user_form.phone) }}</dl>
-		 	<dl>{{ render_field(user_form.signature) }}</dl>
-		 	<dl>{{ render_field(user_form.organization_id) }}</dl>
-		 	<dl>{{ render_field(user_form.tags) }}</dl>
+			<ul>
+		 	{% for field in user_form %}
+		 		{% if field.id != 'csrf_token' %}
+		 			{{ render_field(field)}}
+		 		{% endif %}
+		 	{% endfor %}
+			</ul>
 		 	<input type=submit>
 		</form>
 	</div>
 	<div class="advancedSearch">
 		<form method="GET" action="/search">
-		 	<dl>{{ render_field(ticket_form.ticket_id) }}</dl>
-		 	<dl>{{ render_field(ticket_form.url) }}</dl>
-		 	<dl>{{ render_field(ticket_form.external_id) }}</dl>
-		 	<dl>{{ render_field(ticket_form.created_at) }}</dl>
-		 	<dl>{{ render_field(ticket_form.ticket_type) }}</dl>
-		 	<dl>{{ render_field(ticket_form.subject) }}</dl>
-		 	<dl>{{ render_field(ticket_form.description) }}</dl>
-		 	<dl>{{ render_field(ticket_form.priority) }}</dl>
-		 	<dl>{{ render_field(ticket_form.status) }}</dl>
-		 	<dl>{{ render_field(ticket_form.submitter_id) }}</dl>
-		 	<dl>{{ render_field(ticket_form.assignee_id) }}</dl>
-		 	<dl>{{ render_field(ticket_form.organization_id) }}</dl>
-		 	<dl>{{ render_field(ticket_form.tags) }}</dl>
-		 	<dl>{{ render_field(ticket_form.has_incidents) }}</dl>
-		 	<dl>{{ render_field(ticket_form.due_at) }}</dl>
-		 	<dl>{{ render_field(ticket_form.via) }}</dl>
+			<ul>
+		 	{% for field in ticket_form %}
+		 		{% if field.id != 'csrf_token' %}
+		 			{{ render_field(field)}}
+		 		{% endif %}
+		 	{% endfor %}
+			</ul>
 		 	<input type=submit>
 		</form>
 	</div>

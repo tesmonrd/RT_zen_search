@@ -9,9 +9,9 @@ init_db()
 @app.route('/', methods=['GET', 'POST'])
 def index():
     gen_search = GeneralSearchBar()
-    org_form = OrganizationForm()
-    user_form = UserForm()
-    ticket_form = TicketForm()
+    org_form = OrganizationForm(db_table="Organizations")
+    user_form = UserForm(db_table="Users")
+    ticket_form = TicketForm(db_table="Tickets")
 
     # if request.method == 'GET':
     #     return search_results(gen_search)
