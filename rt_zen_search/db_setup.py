@@ -16,15 +16,15 @@ db_session = scoped_session(sessionmaker(autocommit=False,
 Base = declarative_base()
 Base.query = db_session.query_property()
 
-if not database_exists(engine.url):
-	create_database(engine.url)
-
 
 def init_db():
 	"""Initialize database and load if needed."""
 	if not inspect(engine).get_table_names():
-		create_tables()
-		Base.metadata.create_all(bind=engine)
+		try:
+			create_tables()
+		except SQLAlchemyError as e:
+			return "Error encountered during tables creation: {}".format(e)
+
 		file_loc = ['rt_zen_search/data/' + f for f in os.listdir('rt_zen_search/data')]
 		for json_file in file_loc:
 			if 'organizations' in json_file.lower():
@@ -33,10 +33,13 @@ def init_db():
 				add_db_data(json_file, Users)
 			elif 'tickets' in json_file.lower():
 				add_db_data(json_file, Tickets)
-		db_session.commit()
+			else:
+				print("File type not found for processing")
+				pass
+		return db_session.commit()
 
 	else:
-		Base.metadata.create_all(bind=engine)
+		return Base.metadata.create_all(bind=engine)
 
 
 def add_db_data(json_data_loc, target_model):
@@ -47,7 +50,7 @@ def add_db_data(json_data_loc, target_model):
 			if target_model == Tickets and 'type' in data:
 				data['type_'] = data.pop('type')
 			db_session.add(target_model(**data))
-	db_session.flush()
+	return db_session.flush()
 
 
 

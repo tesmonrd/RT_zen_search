@@ -7,7 +7,6 @@ from wtforms.fields.html5 import DateTimeLocalField
 class GeneralSearchBar(FlaskForm):
     """Contact form."""
     query_all = StringField('Search All')
-    # submit = SubmitField('Submit')
 
 class OrganizationForm(FlaskForm):
     """Contact form."""
