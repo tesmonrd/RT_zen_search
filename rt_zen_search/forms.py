@@ -15,7 +15,6 @@ class OrganizationForm(FlaskForm):
     	URL(message=("Invalid URL format."))])
     external_id = StringField('Organization External ID')
     name = StringField('Name')
-    # domain_names = TextField('Organization Domain Names')
     domain_names = TextField('Organization Domain Names')
     created_at = DateTimeLocalField('Organization Creation Date', format='%Y-%m-%d')
     details = TextField('Organization Details contains')

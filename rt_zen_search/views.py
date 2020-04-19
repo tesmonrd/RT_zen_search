@@ -1,6 +1,7 @@
 import re
 from app import db
 from distutils.util import strtobool
+from sqlalchemy import cast, or_, Text
 from sqlalchemy.sql.expression import false, true
 from rt_zen_search.models import Organizations, Users, Tickets
 
@@ -32,11 +33,12 @@ def create_query(query_data, db_table=None):
 		result_data = db_table.query
 		for attr, value in cleaned_data.items():
 			if attr in type_val_mod or attr == '_id':
-				result_data = db_table.query.filter(getattr(db_table, attr).__eq__(value))
+				result_data = db_table.query.filter(getattr(db_table, attr).__eq__(value)).all()
 			elif attr in sql_arr_mod:
-				result_data = db_table.query.filter(getattr(db_table, attr).in_(value))
+				result_data = db_table.query.filter(or_(*[cast(getattr(db_table, attr), Text).contains(x) for x in value])).all()
 			else:
-				result_data = db_table.query.filter(getattr(db_table, attr).ilike("%%s%%" % value))
+				result_data = db_table.query.filter(getattr(db_table, attr).ilike("%%s%%" % value)).all()
+
 
 	# 	query = db_table.query
 	# 	for f in filter_data:
