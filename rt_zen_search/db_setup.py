@@ -36,7 +36,8 @@ def init_db():
 			else:
 				print("File type not found for processing")
 				pass
-		return db_session.commit()
+		db_session.commit()
+		Base.metadata.create_all(bind=engine)
 
 	else:
 		return Base.metadata.create_all(bind=engine)

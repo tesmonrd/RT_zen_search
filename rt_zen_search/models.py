@@ -9,11 +9,11 @@ class Organizations(db.Model):
     url = db.Column(db.String)
     external_id = db.Column(db.String)
     name = db.Column(db.String)
-    domain_names = db.Column(db.ARRAY(db.String))
+    domain_names = db.Column(db.String)
     created_at = db.Column(db.String)
     details = db.Column(db.String)
     shared_tickets = db.Column(db.Boolean)
-    tags = db.Column(db.ARRAY(db.String))
+    tags = db.Column(db.String)
 
     def __repr__(self):
         return "{}".format(self.name)

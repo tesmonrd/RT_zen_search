@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, FieldList, TextField, SubmitField, SelectField, HiddenField, BooleanField
+from wtforms import StringField, IntegerField, FieldList, TextField, SubmitField, SelectField, FieldList, BooleanField
 from wtforms.validators import DataRequired, Length, Email, URL
 from wtforms.fields.html5 import DateTimeLocalField
 
@@ -15,15 +15,15 @@ class OrganizationForm(FlaskForm):
     	URL(message=("Invalid URL format."))])
     external_id = StringField('Organization External ID')
     name = StringField('Name')
+    # domain_names = TextField('Organization Domain Names')
     domain_names = TextField('Organization Domain Names')
     created_at = DateTimeLocalField('Organization Creation Date', format='%Y-%m-%d')
     details = TextField('Organization Details contains')
     shared_tickets = SelectField(
         choices=[(True, 'True'), (False, 'False'), ('','')],
-        coerce=lambda x: x == 'True'
+        coerce=lambda x: x == 'True', default=None
     )
     tags = TextField('Organization Tags')
-    db_table = HiddenField()
 
 
 class UserForm(FlaskForm):
@@ -48,7 +48,7 @@ class UserForm(FlaskForm):
         coerce=lambda x: x == 'True'
     )
     locale = StringField('Locale')
-    time_zone = StringField('Time Zone')
+    timezone = StringField('Time Zone')
     last_login_at = DateTimeLocalField('Last user login', format='%Y-%m-%d')
     email = StringField('Email', [
         Email(message=('Not a valid email address.'))])
@@ -60,8 +60,7 @@ class UserForm(FlaskForm):
         coerce=lambda x: x == 'True'
     )
     role = StringField('Role')
-    tags = TextField('User Tags')
-    db_table = HiddenField()
+    tags = TextField('User Tags', default='{}')
 
 
 class TicketForm(FlaskForm):
@@ -71,7 +70,7 @@ class TicketForm(FlaskForm):
     	URL(message=("Invalid URL format."))])
     external_id = StringField('Ticket External ID')
     created_at = DateTimeLocalField('Ticket Creation Date', format='%Y-%m-%d')
-    ticket_type = StringField('Ticket Type')
+    type_ = StringField('Ticket Type')
     subject = StringField('Subject')
     description = TextField('Description')
     priority = StringField('Priority')
@@ -86,4 +85,3 @@ class TicketForm(FlaskForm):
     )
     due_at = DateTimeLocalField('Ticket Due Date', format='%Y-%m-%d')
     via = StringField('Via')
-    db_table = HiddenField()

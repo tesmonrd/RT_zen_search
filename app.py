@@ -2,7 +2,6 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from rt_zen_search.forms import GeneralSearchBar, OrganizationForm, UserForm, TicketForm
-from rt_zen_search.views import process_query
 from flask import flash, render_template, request, redirect
 
 
@@ -11,8 +10,8 @@ app.config.from_object(os.environ['APP_SETTINGS'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-#imported further down to address dependency
 from rt_zen_search.db_setup import init_db, db_session
+from rt_zen_search.views import process_query
 init_db()
 
 
@@ -33,9 +32,10 @@ def index():
 
 @app.route('/search', methods=['GET'])
 def search_results():
-    import pdb;pdb.set_trace()
     results = []
-    data = request.args
+    if request.method == 'GET':
+    	data = request.args.to_dict()
+    	process_query(data)
 
     # search_string = search.data['search']
     # if search.data['search'] == '':
