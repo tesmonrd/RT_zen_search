@@ -65,7 +65,7 @@ class UserForm(FlaskForm):
 
 class TicketForm(FlaskForm):
     """Contact form."""
-    ticket_id = IntegerField('Ticket ID')
+    ticket_id = StringField('Ticket ID')
     url = StringField('URL',[
     	URL(message=("Invalid URL format."))])
     external_id = StringField('Ticket External ID')

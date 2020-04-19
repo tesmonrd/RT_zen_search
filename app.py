@@ -32,6 +32,7 @@ def index():
 
 @app.route('/search', methods=['GET'])
 def search_results():
+    import pdb;pdb.set_trace()
     results = []
     if request.method == 'GET':
     	data = request.args.to_dict()
