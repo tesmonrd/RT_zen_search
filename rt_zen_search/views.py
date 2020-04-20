@@ -5,6 +5,7 @@ from itertools import chain
 from sqlalchemy import cast, or_, Text
 from sqlalchemy.sql.expression import false, true
 from rt_zen_search.models import Organizations, Users, Tickets
+from rt_zen_search.table_formatter import OrgTable, UserTable, TicketTable
 
 
 tbl_map = {'org_id': Organizations,'user_id':Users,'ticket_id':Tickets}
@@ -15,14 +16,17 @@ type_int_mod = ['organization_id','submitter_id','assignee_id']
 
 
 def process_query(query_data):
-	# import pdb;pdb.set_trace()
+	import pdb;pdb.set_trace()
 	if 'query_all' in query_data and validated_general(query_data['query_all']):
 		if len(query_data['query_all'].split(',')) > 1:
 			multi_search_val = query_data['query_all'].split(',')
 			results = [clean_and_execute({'query_all':s_t},[v for k,v in tbl_map.items()]) for s_t in multi_search_val]
+			results = list(chain.from_iterable(results))
 		else:
 			results = clean_and_execute(query_data,[v for k,v in tbl_map.items()])
-		return results
+
+		res_table = [OrgTable(results[0]),UserTable(results[1]),TicketTable(result[2])]
+		return res_table
 
 	elif any(key in id_field_mod for key in query_data.keys()):
 		for k in tbl_map.keys():
@@ -35,6 +39,7 @@ def process_query(query_data):
 
 
 def clean_and_execute(query_data, db_table):
+	# import pdb;pdb.set_trace()
 	if isinstance(db_table,list):
 		result_data = []
 		for table in db_table:
@@ -49,7 +54,7 @@ def clean_and_execute(query_data, db_table):
 			_cleaned_data = data_corrections({k:v for k,v in _mapped_data.items() if v != ''})
 			result_data.append(execute_queries(_cleaned_data,table))
 
-		result_data = list(chain.from_iterable(result_data))
+		# result_data = list(chain.from_iterable(result_data))
 		return result_data
 
 	else:

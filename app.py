@@ -18,12 +18,10 @@ init_db()
 @app.route('/', methods=['GET'])
 def index():
 	forms = [GeneralSearchBar(),OrganizationForm(),UserForm(),TicketForm()]
-	# org_form = OrganizationForm()
-	# user_form = UserForm()
-	# ticket_form = TicketForm()
 	return render_template('forms.html',
 		forms=forms,
-		search_results=None
+		search_results=None,
+		msg=None
 		)
 
 
@@ -35,9 +33,15 @@ def search_results():
 
 		data = request.args.to_dict()
 		search_results = process_query(data)
+		if not search_results:
+			msg = 'No results found! (Queryied Data - data:{})'.format([v for v in data.values() if v])
+		if isinstance(search_results, str):
+			msg = search_results
+
 		return render_template('forms.html',
 			search_results=search_results,
-			forms=forms
+			forms=forms,
+			msg=msg
 			)
 
 

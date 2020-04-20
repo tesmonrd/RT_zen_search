@@ -21,10 +21,13 @@
 {% endblock %}
 
 {% block search_results %}
-	{% if search_results != None %}
+	{% if search_results %}
 		{% for res in search_results %}
 			<p>{{res}}</p>
 
 		{% endfor %}
+	{% endif %}
+	{% if msg %}
+		<p>{{ msg }}</p>
 	{% endif %}
 {% endblock %}
