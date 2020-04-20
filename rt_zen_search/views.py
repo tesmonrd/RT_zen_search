@@ -8,7 +8,7 @@ from rt_zen_search.models import Organizations, Users, Tickets
 from rt_zen_search.table_formatter import OrgTable, UserTable, TicketTable
 
 
-tbl_map = {'org_id': Organizations,'user_id':Users,'ticket_id':Tickets}
+tbl_map = {'org_id': [Organizations, OrgTable],'user_id':[Users, UserTable],'ticket_id':[Tickets,TicketTable]}
 id_field_mod = ['_id','org_id','user_id','ticket_id']
 sql_arr_mod = ['domain_names','tags', 'query_all']
 type_bool_mod = ['shared_tickets','active','verified','shared','suspended','has_incidents']
@@ -16,32 +16,39 @@ type_int_mod = ['organization_id','submitter_id','assignee_id']
 
 
 def process_query(query_data):
-	import pdb;pdb.set_trace()
+	"""Handles query processing calls and builds output."""
 	if 'query_all' in query_data and validated_general(query_data['query_all']):
+		results = []
 		if len(query_data['query_all'].split(',')) > 1:
 			multi_search_val = query_data['query_all'].split(',')
-			results = [clean_and_execute({'query_all':s_t},[v for k,v in tbl_map.items()]) for s_t in multi_search_val]
-			results = list(chain.from_iterable(results))
+			for s_t in multi_search_val:
+				_new_data = clean_and_execute({'query_all':s_t},[v[0] for k,v in tbl_map.items()])
+				if not results:
+					results += _new_data
+				else:
+					results = [x[0] + x[1] for x in zip(results,_new_data)]
 		else:
-			results = clean_and_execute(query_data,[v for k,v in tbl_map.items()])
-
-		res_table = [OrgTable(results[0]),UserTable(results[1]),TicketTable(result[2])]
+			results = clean_and_execute(query_data,[v[0] for k,v in tbl_map.items()])
+		res_table = [OrgTable(results[0]),UserTable(results[1]),TicketTable(results[2])]
 		return res_table
 
 	elif any(key in id_field_mod for key in query_data.keys()):
 		for k in tbl_map.keys():
 			if k in query_data.keys():
-				results = clean_and_execute(query_data, tbl_map[k])
-			return results
-			
+				results = clean_and_execute(query_data, tbl_map[k][0])
+				res_table = [tbl_map[k][1](results)]
+				return res_table		
 	else:
 		return "Invalid query sent."
 
 
 def clean_and_execute(query_data, db_table):
-	# import pdb;pdb.set_trace()
+	"""Cleans and calls execution."""
 	if isinstance(db_table,list):
-		result_data = []
+		_orgs = []
+		_users = []
+		_tickets = []
+
 		for table in db_table:
 			_column_names = table.__table__.c.keys()
 
@@ -52,9 +59,14 @@ def clean_and_execute(query_data, db_table):
 
 			_mapped_data = {k:query_data['query_all'] for k in _column_names}
 			_cleaned_data = data_corrections({k:v for k,v in _mapped_data.items() if v != ''})
-			result_data.append(execute_queries(_cleaned_data,table))
 
-		# result_data = list(chain.from_iterable(result_data))
+			if table.__table__.name == 'organizations':
+				_orgs.append(execute_queries(_cleaned_data,table))
+			elif table.__table__.name == 'users':
+				_users.append(execute_queries(_cleaned_data,table))
+			elif table.__table__.name == 'tickets':
+				_tickets.append(execute_queries(_cleaned_data,table))
+		result_data = _orgs + _users + _tickets
 		return result_data
 
 	else:
@@ -64,6 +76,7 @@ def clean_and_execute(query_data, db_table):
 
 
 def execute_queries(cleaned_data, db_table):
+	"""Executes queries on the Postgres DB."""
 	result_data = []
 	for attr, value in cleaned_data.items():
 		if attr in type_int_mod or attr in type_bool_mod or attr == '_id':

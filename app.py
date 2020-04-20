@@ -27,12 +27,11 @@ def index():
 
 @app.route('/search', methods=['GET'])
 def search_results():
-	# import pdb;pdb.set_trace()
 	forms = [GeneralSearchBar(),OrganizationForm(),UserForm(),TicketForm()]
 	if request.method == 'GET':
-
 		data = request.args.to_dict()
 		search_results = process_query(data)
+		msg = None
 		if not search_results:
 			msg = 'No results found! (Queryied Data - data:{})'.format([v for v in data.values() if v])
 		if isinstance(search_results, str):
