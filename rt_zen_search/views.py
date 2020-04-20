@@ -15,7 +15,7 @@ type_int_mod = ['organization_id','submitter_id','assignee_id']
 
 
 def process_query(query_data):
-	import pdb;pdb.set_trace()
+	# import pdb;pdb.set_trace()
 	if 'query_all' in query_data and validated_general(query_data['query_all']):
 		if len(query_data['query_all'].split(',')) > 1:
 			multi_search_val = query_data['query_all'].split(',')
@@ -46,7 +46,8 @@ def clean_and_execute(query_data, db_table):
 			_mapped_data = {k:query_data['query_all'] for k in _column_names}
 			_cleaned_data = data_corrections({k:v for k,v in _mapped_data.items() if v != ''})
 			result_data.append(execute_queries(_cleaned_data,table))
-		print(result_data)
+		import pdb;pdb.set_trace()
+		result_data = list(chain.from_iterable(result_data))
 		return result_data
 
 	else:
@@ -111,7 +112,7 @@ def data_corrections(cleaned_data):
 
 def validated_general(query_data):
 	"""Basic check for unsafe characters in search."""
-	regex = re.compile('[!#$%^&*()<>?/\|}{~:]')
+	regex = re.compile('[!#$%^&*()<>?\|}{~:]')
 	if(regex.search(query_data) == None):
 		return True
 	else:
