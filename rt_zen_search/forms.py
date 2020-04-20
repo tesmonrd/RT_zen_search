@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, FieldList, TextField, SubmitField, SelectField, FieldList, BooleanField
-from wtforms.validators import DataRequired, Length, Email, URL
+from wtforms import StringField, IntegerField, FieldList, TextField, SubmitField, SelectField, FieldList, BooleanField, DateTimeField
+from wtforms.validators import Email, URL
 from wtforms.fields.html5 import DateTimeLocalField
 
 
@@ -16,7 +16,7 @@ class OrganizationForm(FlaskForm):
     external_id = StringField('Organization External ID')
     name = StringField('Name')
     domain_names = TextField('Organization Domain Names')
-    created_at = DateTimeLocalField('Organization Creation Date', format='%Y-%m-%d')
+    created_at = DateTimeField('Organization Creation Date', format='%Y-%m-%dT%H:%M:%S')
     details = TextField('Organization Details contains')
     shared_tickets = SelectField(
         choices=[(True, 'True'), (False, 'False'), ('','')],

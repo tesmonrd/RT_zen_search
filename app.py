@@ -17,35 +17,38 @@ init_db()
 
 @app.route('/', methods=['GET'])
 def index():
-    gen_search = GeneralSearchBar()
-    org_form = OrganizationForm()
-    user_form = UserForm()
-    ticket_form = TicketForm()
+	gen_search = GeneralSearchBar()
+	org_form = OrganizationForm()
+	user_form = UserForm()
+	ticket_form = TicketForm()
 
-    return render_template('forms.html',
-    	gen_search=gen_search,
-    	org_form=org_form,
-    	user_form=user_form,
-    	ticket_form=ticket_form
-    	)
+	return render_template('forms.html',
+		gen_search=gen_search,
+		org_form=org_form,
+		user_form=user_form,
+		ticket_form=ticket_form
+		)
 
 
 @app.route('/search', methods=['GET'])
 def search_results():
-    if request.method == 'GET':
-    	data = request.args.to_dict()
-    	process_query(data)
+	import pdb;pdb.set_trace()
+	if request.method == 'GET':
+		data = request.args.to_dict()
+		search_results = process_query(data)
+		return render_template('results_tbl.html', search_results=search_results)
 
-    # search_string = search.data['search']
-    # if search.data['search'] == '':
-    #     qry = db_session.query(Album)
-    #     results = qry.all()
-    # if not results:
-    #     flash('No results found!')
-    #     return redirect('/')
-    # else:
-    #     # display results
-    #     return render_template('results.html', results=results)
+
+	# search_string = search.data['search']
+	# if search.data['search'] == '':
+	#     qry = db_session.query(Album)
+	#     results = qry.all()
+	# if not results:
+	#     flash('No results found!')
+	#     return redirect('/')
+	# else:
+	#     # display results
+	#     return render_template('results.html', results=results)
 
 
 if __name__ == '__main__':

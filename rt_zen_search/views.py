@@ -22,11 +22,13 @@ def process_query(query_data):
 			results = [clean_and_execute({'query_all':s_t},[v for k,v in tbl_map.items()]) for s_t in multi_search_val]
 		else:
 			results = clean_and_execute(query_data,[v for k,v in tbl_map.items()])
+		return results
 
 	elif any(key in id_field_mod for key in query_data.keys()):
 		for k in tbl_map.keys():
 			if k in query_data.keys():
 				results = clean_and_execute(query_data, tbl_map[k])
+			return results
 			
 	else:
 		return "Invalid query sent."
@@ -46,7 +48,7 @@ def clean_and_execute(query_data, db_table):
 			_mapped_data = {k:query_data['query_all'] for k in _column_names}
 			_cleaned_data = data_corrections({k:v for k,v in _mapped_data.items() if v != ''})
 			result_data.append(execute_queries(_cleaned_data,table))
-		import pdb;pdb.set_trace()
+
 		result_data = list(chain.from_iterable(result_data))
 		return result_data
 
@@ -72,42 +74,42 @@ def execute_queries(cleaned_data, db_table):
 
 def data_corrections(cleaned_data):
 	"""Correct type issues and handle field modifications."""
-	# try:
-	cleaned_keys = cleaned_data.keys()
-	for id_mod in id_field_mod:
-		if id_mod in cleaned_keys and 'ticket_id' not in cleaned_keys:
-			if not cleaned_data[id_mod].isdigit():
-				del cleaned_data[id_mod]
-			else:
-				cleaned_data['_id'] = int(cleaned_data.pop(id_mod))
-		if id_mod in cleaned_keys:
-			cleaned_data['_id'] = cleaned_data.pop(id_mod)
-
-	for sql_mod in sql_arr_mod:
-		if sql_mod in cleaned_keys:
-			cleaned_data[sql_mod] = cleaned_data[sql_mod].split(",")
-
-	for int_mod in type_int_mod:
-		if int_mod in cleaned_keys:
-			if not cleaned_data[int_mod].isdigit():
-				del cleaned_data[int_mod]
-			else:
-				cleaned_data[int_mod] = int(cleaned_data[int_mod])
-
-	for bool_mod in type_bool_mod:
-		if bool_mod in cleaned_keys:
-			try:
-				if strtobool(cleaned_data[bool_mod]) == 0:
-					cleaned_data[bool_mod] = false()
+	try:
+		cleaned_keys = cleaned_data.keys()
+		for id_mod in id_field_mod:
+			if id_mod in cleaned_keys and 'ticket_id' not in cleaned_keys:
+				if not cleaned_data[id_mod].isdigit():
+					del cleaned_data[id_mod]
 				else:
-					cleaned_data[bool_mod] = true()
-			except ValueError:
-				del cleaned_data[bool_mod]
+					cleaned_data['_id'] = int(cleaned_data.pop(id_mod))
+			if id_mod in cleaned_keys:
+				cleaned_data['_id'] = cleaned_data.pop(id_mod)
 
-	return cleaned_data
+		for sql_mod in sql_arr_mod:
+			if sql_mod in cleaned_keys:
+				cleaned_data[sql_mod] = cleaned_data[sql_mod].split(",")
 
-	# except KeyError as e:
-	# 	return "Invalid key passed in data: {}".format(e)
+		for int_mod in type_int_mod:
+			if int_mod in cleaned_keys:
+				if not cleaned_data[int_mod].isdigit():
+					del cleaned_data[int_mod]
+				else:
+					cleaned_data[int_mod] = int(cleaned_data[int_mod])
+
+		for bool_mod in type_bool_mod:
+			if bool_mod in cleaned_keys:
+				try:
+					if strtobool(cleaned_data[bool_mod]) == 0:
+						cleaned_data[bool_mod] = false()
+					else:
+						cleaned_data[bool_mod] = true()
+				except ValueError:
+					del cleaned_data[bool_mod]
+
+		return cleaned_data
+
+	except KeyError as e:
+		return "Invalid key passed in data: {}".format(e)
 
 
 def validated_general(query_data):
