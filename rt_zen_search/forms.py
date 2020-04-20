@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, FieldList, TextField, SubmitField, SelectField, FieldList, BooleanField, DateTimeField
+from wtforms import StringField, IntegerField, FieldList, TextField, SubmitField,\
+                    SelectField, FieldList, BooleanField, DateTimeField
 from wtforms.validators import Email, URL
-from wtforms.fields.html5 import DateTimeLocalField
+from wtforms.fields.html5 import EmailField
 
 
 class GeneralSearchBar(FlaskForm):
@@ -33,7 +34,7 @@ class UserForm(FlaskForm):
     external_id = StringField('User External ID')
     name = StringField('Name')
     alias = StringField('Alias')
-    created_at = DateTimeLocalField('User Creation Date', format='%Y-%m-%d')
+    created_at = DateTimeField('User Creation Date', format='%Y-%m-%dT%H:%M:%S')
     active = SelectField(
         choices=[(True, 'True'), (False, 'False'), ('','')],
         coerce=lambda x: x == 'True'
@@ -48,9 +49,10 @@ class UserForm(FlaskForm):
     )
     locale = StringField('Locale')
     timezone = StringField('Time Zone')
-    last_login_at = DateTimeLocalField('Last user login', format='%Y-%m-%d')
-    email = StringField('Email', [
-        Email(message=('Not a valid email address.'))])
+    last_login_at = DateTimeField('Last user login', format='%Y-%m-%dT%H:%M:%S')
+    # email = StringField('Email', [
+    #     Email(message=('Not a valid email address.'))])
+    email = EmailField('Email')
     phone = StringField('Phone')
     signature = StringField('Signature')
     organization_id = IntegerField('Orangization ID')
@@ -59,7 +61,7 @@ class UserForm(FlaskForm):
         coerce=lambda x: x == 'True'
     )
     role = StringField('Role')
-    tags = TextField('User Tags', default='{}')
+    tags = TextField('User Tags')
 
 
 class TicketForm(FlaskForm):
@@ -68,7 +70,7 @@ class TicketForm(FlaskForm):
     url = StringField('URL',[
     	URL(message=("Invalid URL format."))])
     external_id = StringField('Ticket External ID')
-    created_at = DateTimeLocalField('Ticket Creation Date', format='%Y-%m-%d')
+    created_at = DateTimeField('Ticket Creation Date', format='%Y-%m-%dT%H:%M:%S')
     type_ = StringField('Ticket Type')
     subject = StringField('Subject')
     description = TextField('Description')
@@ -82,5 +84,5 @@ class TicketForm(FlaskForm):
         choices=[(True, 'True'), (False, 'False'), ('','')],
         coerce=lambda x: x == 'True'
     )
-    due_at = DateTimeLocalField('Ticket Due Date', format='%Y-%m-%d')
+    due_at = DateTimeField('Ticket Due Date', format='%Y-%m-%d')
     via = StringField('Via')

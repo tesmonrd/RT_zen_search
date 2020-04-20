@@ -2,49 +2,29 @@
 
 {% block search_content %}
 <div class="controlBox">
-	<div class="mainSearch">
 	{% from "_formhelpers.html" import render_field %}
-		<form method="GET" action="/search">
-		 	<dl>{{ render_field(gen_search.query_all) }}</dl>
-		 	<input type=submit>
-		</form>
-	</div>
-	<div class="advancedSearch">
-		<form method="GET" action="/search">
-			<ul>
-		 	{% for field in org_form %}
-		 		{% if field.id != 'csrf_token' %}
-		 			{{ render_field(field)}}
-		 		{% endif %}
-		 	{% endfor %}
-			</ul>
-		 	<input type=submit>
-		 </dl>
-		</form>
-	</div>
-	<div class="advancedSearch">
-		<form method="GET" action="/search">
-			<ul>
-		 	{% for field in user_form %}
-		 		{% if field.id != 'csrf_token' %}
-		 			{{ render_field(field)}}
-		 		{% endif %}
-		 	{% endfor %}
-			</ul>
-		 	<input type=submit>
-		</form>
-	</div>
-	<div class="advancedSearch">
-		<form method="GET" action="/search">
-			<ul>
-		 	{% for field in ticket_form %}
-		 		{% if field.id != 'csrf_token' %}
-		 			{{ render_field(field)}}
-		 		{% endif %}
-		 	{% endfor %}
-			</ul>
-		 	<input type=submit>
-		</form>
-	</div>
-</div>
+	{% for search_form in forms %}
+		<div class="advancedSearch">
+			<form method="GET" action="/search">
+				<ul>
+			 	{% for field in search_form %}
+			 		{% if field.id != 'csrf_token' %}
+			 			{{ render_field(field)}}
+			 		{% endif %}
+			 	{% endfor %}
+				</ul>
+			 	<input type=submit>
+			 </dl>
+			</form>
+		</div>
+	{% endfor %}
+{% endblock %}
+
+{% block search_results %}
+	{% if search_results != None %}
+		{% for res in search_results %}
+			<p>{{res}}</p>
+
+		{% endfor %}
+	{% endif %}
 {% endblock %}

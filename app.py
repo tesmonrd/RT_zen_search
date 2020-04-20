@@ -17,26 +17,28 @@ init_db()
 
 @app.route('/', methods=['GET'])
 def index():
-	gen_search = GeneralSearchBar()
-	org_form = OrganizationForm()
-	user_form = UserForm()
-	ticket_form = TicketForm()
-
+	forms = [GeneralSearchBar(),OrganizationForm(),UserForm(),TicketForm()]
+	# org_form = OrganizationForm()
+	# user_form = UserForm()
+	# ticket_form = TicketForm()
 	return render_template('forms.html',
-		gen_search=gen_search,
-		org_form=org_form,
-		user_form=user_form,
-		ticket_form=ticket_form
+		forms=forms,
+		search_results=None
 		)
 
 
 @app.route('/search', methods=['GET'])
 def search_results():
-	import pdb;pdb.set_trace()
+	# import pdb;pdb.set_trace()
+	forms = [GeneralSearchBar(),OrganizationForm(),UserForm(),TicketForm()]
 	if request.method == 'GET':
+
 		data = request.args.to_dict()
 		search_results = process_query(data)
-		return render_template('results_tbl.html', search_results=search_results)
+		return render_template('forms.html',
+			search_results=search_results,
+			forms=forms
+			)
 
 
 	# search_string = search.data['search']
