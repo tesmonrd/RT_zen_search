@@ -9,41 +9,33 @@ from rt_zen_search.models import Organizations, Users, Tickets
 from rt_zen_search.db_init import create_tables
 
 
-engine = create_engine(os.environ['DATABASE_URL'], pool_pre_ping=True)
-db_session = scoped_session(sessionmaker(autocommit=False,
-										 autoflush=False,
-										 bind=engine))
-Base = declarative_base()
-Base.query = db_session.query_property()
-
-
-def init_db():
+def init_db(db_url):
 	"""Initialize database and load if needed."""
-	if not inspect(engine).get_table_names():
-		try:
-			create_tables()
-		except SQLAlchemyError as e:
-			return "Error encountered during tables creation: {}".format(e)
-
+	engine = create_engine(db_url, pool_pre_ping=True)
+	db_session = scoped_session(sessionmaker(autocommit=False,autoflush=False,bind=engine))
+	Base = declarative_base()
+	Base.query = db_session.query_property()
+	
+	try:
+		return Base.metadata.create_all(bind=engine)
+	except SQLAlchemyError:
+		create_tables(db_url)
 		file_loc = ['rt_zen_search/data/' + f for f in os.listdir('rt_zen_search/data')]
 		for json_file in file_loc:
 			if 'organizations' in json_file.lower():
-				add_db_data(json_file, Organizations)
+				add_db_data(db_session, json_file, Organizations)
 			elif 'users' in json_file.lower():
-				add_db_data(json_file, Users)
+				add_db_data(db_session, json_file, Users)
 			elif 'tickets' in json_file.lower():
-				add_db_data(json_file, Tickets)
+				add_db_data(db_session, json_file, Tickets)
 			else:
 				print("File type not found for processing")
 				pass
 		db_session.commit()
 		Base.metadata.create_all(bind=engine)
 
-	else:
-		return Base.metadata.create_all(bind=engine)
 
-
-def add_db_data(json_data_loc, target_model):
+def add_db_data(db_session, json_data_loc, target_model):
 	"""Extracts JSON and flushes to postgres."""
 	with open(json_data_loc, 'r') as f:
 		data_dict = json.load(f)

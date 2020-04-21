@@ -1,5 +1,4 @@
 import re
-from app import db
 from distutils.util import strtobool
 from itertools import chain
 from sqlalchemy import cast, or_, Text

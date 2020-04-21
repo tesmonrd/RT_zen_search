@@ -21,6 +21,7 @@ input#query_all {
   font-size: 12px;
   overflow-y: auto;
   table-layout: fixed;
+  margin-right: 5%;
   width:100%;
 }
 
@@ -32,14 +33,14 @@ input#query_all {
 
 .sidebar {
   position: fixed;
-  top: 145px;
+  top: 155px;
   bottom: 0;
   left: 0;
   z-index: 1000;
   display: block;
   padding: 20px;
   /*overflow-x: hidden;*/
-  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+  overflow-y: auto;
   background-color: #f5f5f5;
   border-right: 1px solid #eee;
 }

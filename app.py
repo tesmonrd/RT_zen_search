@@ -1,19 +1,18 @@
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from rt_zen_search.models import db
 from rt_zen_search.forms import GeneralSearchBar, OrganizationForm, UserForm, TicketForm
 from flask import flash, render_template, request, redirect
+from rt_zen_search.db_setup import init_db
+from rt_zen_search.views import process_query
 
 
 app = Flask(__name__, template_folder='rt_zen_search/templates',static_folder='rt_zen_search/static')
-app.config.from_object(os.environ['APP_SETTINGS'])
+app.config.from_object('config.AppConfig')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-
-# Importing lower due to dependencies
-from rt_zen_search.db_setup import init_db, db_session
-from rt_zen_search.views import process_query
-init_db()
+init_db(app.config['SQLALCHEMY_DATABASE_URI'])
+db.init_app(app)
 
 
 @app.route('/', methods=['GET'])

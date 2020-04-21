@@ -13,11 +13,12 @@
 		</form>
 	</div>
 	<div class="row">
-		<div class="col-sm-3 col-md-3 sidebar">
+		<div class="col-sm-3 col-md-4 sidebar">
 	{% for search_form in forms %}
 		{% if search_form.org_id %}
 		<!-- <button class="filter_option">Organizations</button> -->
-			<div class = "filter_option">
+		<div class = "filter_option">
+			<h4>Organization</h4>
 			<form method="GET" action="/search">
 				<ul>
 			 	{% for field in search_form %}
@@ -32,6 +33,7 @@
 		{% elif search_form.user_id %}
 		<!-- <button class="filter_option">Users</button> -->
 		<div class = "filter_option">
+			<h4>Users</h4>
 			<form method="GET" action="/search">
 				<ul>
 			 	{% for field in search_form %}
@@ -46,6 +48,7 @@
 		{% elif search_form.ticket_id%}
 		<!-- <button class="filter_option">Tickets</button> -->
 		<div class = "filter_option">
+			<h4>Tickets</h4>
 			<form method="GET" action="/search">
 				<ul>
 			 	{% for field in search_form %}
@@ -60,7 +63,7 @@
 		{% endif %}
 	{% endfor %}
 	</div>
-	<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" id="resultsTable">
+	<div class="main" id="resultsTable">
 		<div class="row">
 	{% if search_results %}
 		{% for res in search_results %}
