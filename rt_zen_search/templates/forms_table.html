@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% from "_formhelpers.html" import render_field %}
+{% block search_content %}
+<div class="container-fluid">
+	<div id="mainSearch">
+		<form method="GET" action="/search">
+			<ul>
+			{{ render_field(gen_search.query_all) }}
+			</ul>
+			<input type=submit><br/>
+			<a id="toggleAdv">Advanced Search</a>
+		</form>
+	</div>
+	<div class="row">
+		<div class="col-sm-3 col-md-3 sidebar">
+	{% for search_form in forms %}
+		{% if search_form.org_id %}
+		<!-- <button class="filter_option">Organizations</button> -->
+			<div class = "filter_option">
+			<form method="GET" action="/search">
+				<ul>
+			 	{% for field in search_form %}
+			 		{% if field.id != 'csrf_token' %}
+			 			{{ render_field(field)}}
+			 		{% endif %}
+			 	{% endfor %}
+				</ul>
+			 	<input type=submit>
+			</form>
+		</div>
+		{% elif search_form.user_id %}
+		<!-- <button class="filter_option">Users</button> -->
+		<div class = "filter_option">
+			<form method="GET" action="/search">
+				<ul>
+			 	{% for field in search_form %}
+			 		{% if field.id != 'csrf_token' %}
+			 			{{ render_field(field)}}
+			 		{% endif %}
+			 	{% endfor %}
+				</ul>
+			 	<input type=submit>
+			</form>
+		</div>
+		{% elif search_form.ticket_id%}
+		<!-- <button class="filter_option">Tickets</button> -->
+		<div class = "filter_option">
+			<form method="GET" action="/search">
+				<ul>
+			 	{% for field in search_form %}
+			 		{% if field.id != 'csrf_token' %}
+			 			{{ render_field(field)}}
+			 		{% endif %}
+			 	{% endfor %}
+				</ul>
+			 	<input type=submit>
+			</form>
+		</div>
+		{% endif %}
+	{% endfor %}
+	</div>
+	<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" id="resultsTable">
+		<div class="row">
+	{% if search_results %}
+		{% for res in search_results %}
+			{{res}}
+
+		{% endfor %}
+	{% endif %}
+	{% if msg %}
+		<p>{{ msg }}</p>
+	{% endif %}
+	</div>
+	</div>
+</div>
+</div>
+{% endblock %}

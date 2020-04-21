@@ -6,7 +6,7 @@ from wtforms.fields.html5 import EmailField
 
 
 class GeneralSearchBar(FlaskForm):
-    """Contact form."""
+    """Search Bar form init."""
     query_all = StringField('Search All')
 
 class OrganizationForm(FlaskForm):
@@ -50,8 +50,6 @@ class UserForm(FlaskForm):
     locale = StringField('Locale')
     timezone = StringField('Time Zone')
     last_login_at = DateTimeField('Last user login', format='%Y-%m-%dT%H:%M:%S')
-    # email = StringField('Email', [
-    #     Email(message=('Not a valid email address.'))])
     email = EmailField('Email')
     phone = StringField('Phone')
     signature = StringField('Signature')
