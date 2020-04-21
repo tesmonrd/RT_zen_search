@@ -10,7 +10,6 @@ from rt_zen_search.views import process_query
 
 app = Flask(__name__, template_folder='rt_zen_search/templates',static_folder='rt_zen_search/static')
 app.config.from_object('config.AppConfig')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 init_db(app.config['SQLALCHEMY_DATABASE_URI'])
 db.init_app(app)
 
