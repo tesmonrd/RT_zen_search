@@ -17,38 +17,41 @@ type_int_mod = ['organization_id','submitter_id','assignee_id']
 
 def process_query(query_data):
 	"""Handles query processing calls and builds output."""
-	if 'query_all' in query_data and validated_general(query_data['query_all']):
-		results = []
-		if len(query_data['query_all'].split(',')) > 1:
-			multi_search_val = [w.strip() for w in query_data['query_all'].split(',')]
-			for s_t in multi_search_val:
-				new_data = clean_and_execute({'query_all':s_t},[v[0] for k,v in tbl_map.items()])
-				if not results:
-					results += new_data
-				else:
-					results = [x[0] + x[1] for x in zip(results,new_data)]
-		else:
-			results = clean_and_execute(query_data,[v[0] for k,v in tbl_map.items()])
+	if validated_general([*query_data.values()]):
+		if 'query_all' in query_data:
+			results = []
+			if len(query_data['query_all'].split(',')) > 1:
+				multi_search_val = [w.strip() for w in query_data['query_all'].split(',')]
+				for s_t in multi_search_val:
+					new_data = clean_and_execute({'query_all':s_t},[v[0] for k,v in tbl_map.items()])
+					if not results:
+						results += new_data
+					else:
+						results = [x[0] + x[1] for x in zip(results,new_data)]
+			else:
+				results = clean_and_execute(query_data,[v[0] for k,v in tbl_map.items()])
 
-		if not any(results):
+			if not any(results):
+				return None
+			res_table = [OrgTable(results[0]),UserTable(results[1]),TicketTable(results[2])]
+			return res_table
+
+		elif any(key in id_field_mod for key in query_data.keys()):
+			for k in tbl_map.keys():
+				if k in query_data.keys():
+					results = clean_and_execute(query_data, tbl_map[k][0])
+					if not any(results):
+						return None
+					res_table = [tbl_map[k][1](results)]
+					return res_table
+
+		elif not all(query_data.values()):
 			return None
-		res_table = [OrgTable(results[0]),UserTable(results[1]),TicketTable(results[2])]
-		return res_table
 
-	elif any(key in id_field_mod for key in query_data.keys()):
-		for k in tbl_map.keys():
-			if k in query_data.keys():
-				results = clean_and_execute(query_data, tbl_map[k][0])
-				if not any(results):
-					return None
-				res_table = [tbl_map[k][1](results)]
-				return res_table
-
-	elif not all(query_data.values()):
-		return None
-
+		else:
+			abort(400)
 	else:
-		abort(400)
+		return None
 
 
 def clean_and_execute(query_data, db_table):
@@ -60,7 +63,6 @@ def clean_and_execute(query_data, db_table):
 
 		for table in db_table:
 			column_names = table.__table__.c.keys()
-
 			if table == Tickets:
 				column_names = ['ticket_id' if x == '_id' else x for x in column_names]
 			if 'true' in query_data['query_all'].lower() or 'false' in query_data['query_all'].lower():
@@ -80,11 +82,11 @@ def clean_and_execute(query_data, db_table):
 
 	else:
 		cleaned_data = data_corrections({k:v for k,v in query_data.items() if v != ''})
-		result_data = execute_queries(cleaned_data, db_table)
+		result_data = execute_queries(cleaned_data, db_table, True)
 		return result_data
 
 
-def execute_queries(cleaned_data, db_table):
+def execute_queries(cleaned_data, db_table, and_filter=False):
 	"""Executes queries on the Postgres DB."""
 	result_data = []
 	for attr, value in cleaned_data.items():
@@ -94,6 +96,16 @@ def execute_queries(cleaned_data, db_table):
 			result_data.append(db_table.query.filter(or_(*[cast(getattr(db_table, attr), Text).contains(x) for x in value])).all())
 		else:
 			result_data.append(db_table.query.filter(getattr(db_table, attr).ilike(value)).all())
+
+	if and_filter and len(result_data) > 1:
+		match = []
+		comp = result_data[0]
+		data = list(chain.from_iterable(result_data[1:]))
+		for item in comp:
+			if item in data:
+				match.append(item)
+		result_data = match
+		return result_data
 
 	flattened_data = list(chain.from_iterable(result_data))
 	return flattened_data
@@ -141,9 +153,12 @@ def data_corrections(cleaned_data):
 
 def validated_general(query_data):
 	"""Basic check for unsafe characters in search."""
-	regex = re.compile('[!#$%^&*()<>?\|}{~:]')
-	if query_data and (regex.search(query_data) == None):
-		return True
-	else:
-		return False
+	regex = re.compile(r'[#$%^&*<>?\\|}{~:]')
+	valid = False
+	for data in query_data:
+		if bool(regex.search(data)):
+			valid = False
+		else:
+			valid = True
+	return valid
 

@@ -7,7 +7,7 @@ from wtforms.fields.html5 import EmailField
 
 class GeneralSearchBar(FlaskForm):
     """Search Bar form init."""
-    query_all = StringField('Search All')
+    query_all = StringField('Search All', render_kw={"placeholder": "Please use comma delimited terms"})
 
 class OrganizationForm(FlaskForm):
     """Contact form."""
