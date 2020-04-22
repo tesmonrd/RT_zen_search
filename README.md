@@ -8,7 +8,7 @@ Provides a main search bar that will query data that contains ANY data that cont
 * Attached a POSTGRESQL database because 1) presence of key relationships in the data and 2) postgres is best at handling array fields (yes, I could've just done a json.loads call instead of implementing a DB but whats the fun in that!)
 
 ## Installation and Running
-###Running the app
+### Running the app
 *REQUIRES POSTGRESQL (if you don't have it downloaded, please download from: https://www.postgresql.org/download/)*
 1. navigate to a new project directory
 2. 'git clone' from my master repo: https://github.com/tesmonrd/rt_zen_search.git
@@ -17,7 +17,7 @@ Provides a main search bar that will query data that contains ANY data that cont
 5. load the environment variables from envs/local.env using 'source envs/local.env'
 6. simply run 'flask run' from your commandline and you're off! Simply browse to your localhost:5000 or 127.0.0.1:5000
 
-###Running Tests
+### Running Tests
 1. Once steps are completed for running the app, execute tests by running 'python -m unittest discover'
 
 ## Future Dev
