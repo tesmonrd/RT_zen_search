@@ -1,4 +1,3 @@
-import os
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy import Column, Integer, String, Boolean, ARRAY
 from sqlalchemy.ext.declarative import declarative_base
@@ -7,8 +6,10 @@ from sqlalchemy_utils import database_exists, create_database
 
 Base = declarative_base()
 
+
 class Organizations(Base):
-    """Define Org base class for SQLAlchemy"""
+    """Define Org base class for SQLAlchemy."""
+
     __tablename__ = "organizations"
     _id = Column(Integer, primary_key=True)
     url = Column(String)
@@ -25,7 +26,8 @@ class Organizations(Base):
 
 
 class Users(Base):
-    """Define User base class for SQLAlchemy"""
+    """Define User base class for SQLAlchemy."""
+
     __tablename__ = "users"
     _id = Column(Integer, primary_key=True)
     url = Column(String)
@@ -52,7 +54,8 @@ class Users(Base):
 
 
 class Tickets(Base):
-    """Define User base class for SQLAlchemy"""
+    """Define Ticket base class for SQLAlchemy."""
+
     __tablename__ = "tickets"
     _id = Column(String, primary_key=True)
     url = Column(String)
@@ -81,4 +84,3 @@ def create_tables(db_url):
         create_database(engine.url)
 
     Base.metadata.create_all(engine)
-

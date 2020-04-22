@@ -8,11 +8,17 @@ from rt_zen_search.models import Organizations, Users, Tickets
 from rt_zen_search.table_formatter import OrgTable, UserTable, TicketTable
 
 
-tbl_map = {'org_id': [Organizations, OrgTable],'user_id':[Users, UserTable],'ticket_id':[Tickets,TicketTable]}
-id_field_mod = ['_id','org_id','user_id','ticket_id']
-sql_arr_mod = ['domain_names','tags', 'query_all']
-type_bool_mod = ['shared_tickets','active','verified','shared','suspended','has_incidents']
-type_int_mod = ['organization_id','submitter_id','assignee_id']
+tbl_map = {
+	'org_id': [Organizations, OrgTable],
+	'user_id': [Users, UserTable],
+	'ticket_id': [Tickets, TicketTable]
+}
+id_field_mod = ['_id', 'org_id', 'user_id', 'ticket_id']
+sql_arr_mod = ['domain_names', 'tags', 'query_all']
+type_bool_mod = ['shared_tickets', 'active', 'verified',
+	'shared', 'suspended', 'has_incidents'
+]
+type_int_mod = ['organization_id', 'submitter_id', 'assignee_id']
 
 
 def process_query(query_data):
@@ -23,17 +29,23 @@ def process_query(query_data):
 			if len(query_data['query_all'].split(',')) > 1:
 				multi_search_val = [w.strip() for w in query_data['query_all'].split(',')]
 				for s_t in multi_search_val:
-					new_data = clean_and_execute({'query_all':s_t},[v[0] for k,v in tbl_map.items()])
+					new_data = clean_and_execute(
+						{'query_all': s_t}, [v[0] for k, v in tbl_map.items()]
+					)
 					if not results:
 						results += new_data
 					else:
-						results = [x[0] + x[1] for x in zip(results,new_data)]
+						results = [x[0] + x[1] for x in zip(results, new_data)]
 			else:
-				results = clean_and_execute(query_data,[v[0] for k,v in tbl_map.items()])
+				results = clean_and_execute(query_data, [v[0] for k, v in tbl_map.items()])
 
 			if not any(results):
 				return None
-			res_table = [OrgTable(results[0]),UserTable(results[1]),TicketTable(results[2])]
+			res_table = [
+				OrgTable(results[0]),
+				UserTable(results[1]),
+				TicketTable(results[2])
+			]
 			return res_table
 
 		elif any(key in id_field_mod for key in query_data.keys()):
@@ -56,7 +68,7 @@ def process_query(query_data):
 
 def clean_and_execute(query_data, db_table):
 	"""Cleans and calls execution."""
-	if isinstance(db_table,list):
+	if isinstance(db_table, list):
 		orgs = []
 		users = []
 		tickets = []
@@ -68,20 +80,24 @@ def clean_and_execute(query_data, db_table):
 			if 'true' in query_data['query_all'].lower() or 'false' in query_data['query_all'].lower():
 				column_names = [bool_f for bool_f in column_names if bool_f in type_bool_mod]
 
-			mapped_data = {k:query_data['query_all'] for k in column_names}
-			cleaned_data = data_corrections({k:v for k,v in mapped_data.items() if v != ''})
+			mapped_data = {k: query_data['query_all'] for k in column_names}
+			cleaned_data = data_corrections(
+				{k: v for k, v in mapped_data.items() if v != ''}
+				)
 
 			if table.__table__.name == 'organizations':
-				orgs.append(execute_queries(cleaned_data,table))
+				orgs.append(execute_queries(cleaned_data, table))
 			elif table.__table__.name == 'users':
-				users.append(execute_queries(cleaned_data,table))
+				users.append(execute_queries(cleaned_data, table))
 			elif table.__table__.name == 'tickets':
-				tickets.append(execute_queries(cleaned_data,table))
+				tickets.append(execute_queries(cleaned_data, table))
 		result_data = orgs + users + tickets
 		return result_data
 
 	else:
-		cleaned_data = data_corrections({k:v for k,v in query_data.items() if v != ''})
+		cleaned_data = data_corrections(
+			{k: v for k, v in query_data.items() if v != ''}
+		)
 		result_data = execute_queries(cleaned_data, db_table, True)
 		return result_data
 
@@ -91,11 +107,17 @@ def execute_queries(cleaned_data, db_table, and_filter=False):
 	result_data = []
 	for attr, value in cleaned_data.items():
 		if attr in type_int_mod or attr in type_bool_mod or attr == '_id':
-			result_data.append(db_table.query.filter(getattr(db_table, attr).__eq__(value)).all())
+			result_data.append(
+				db_table.query.filter(getattr(db_table, attr).__eq__(value)).all()
+			)
 		elif attr in sql_arr_mod:
-			result_data.append(db_table.query.filter(or_(*[cast(getattr(db_table, attr), Text).contains(x) for x in value])).all())
+			result_data.append(
+				db_table.query.filter(or_(*[cast(getattr(db_table, attr), Text).contains(x) for x in value])).all()
+			)
 		else:
-			result_data.append(db_table.query.filter(getattr(db_table, attr).ilike(value)).all())
+			result_data.append(
+				db_table.query.filter(getattr(db_table, attr).ilike(value)).all()
+			)
 
 	if and_filter and len(result_data) > 1:
 		match = []
@@ -161,4 +183,3 @@ def validated_general(query_data):
 		else:
 			valid = True
 	return valid
-

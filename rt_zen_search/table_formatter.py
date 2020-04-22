@@ -3,6 +3,7 @@ from flask_table import Table, Col
 
 class OrgTable(Table):
     """Define Org query data for data loading/querying in SQLAlchemy."""
+
     classes = ['table', 'table-bordered', 'table-striped']
     _id = Col('_id')
     url = Col('url')
@@ -17,6 +18,7 @@ class OrgTable(Table):
 
 class UserTable(Table):
     """Define User query data for data loading/querying in SQLAlchemy."""
+
     classes = ['table', 'table-bordered', 'table-striped']
     _id = Col('_id')
     url = Col('url')
@@ -41,6 +43,7 @@ class UserTable(Table):
 
 class TicketTable(Table):
     """Define Ticket query data for data loading/querying in SQLAlchemy."""
+
     classes = ['table', 'table-bordered', 'table-striped']
     _id = Col('_id')
     url = Col('url')
