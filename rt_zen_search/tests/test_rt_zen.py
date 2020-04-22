@@ -67,6 +67,15 @@ class DBViewsTests(BaseTestCase):
 		with self.assertRaises(exceptions.BadRequest):
 			views.process_query(invalid_query)
 
+	def test_and_query_match(self):
+		res = views.clean_and_execute(valid_query, Organizations)
+		self.assertEqual(res[0].name, 'Enthaze')
+
+	def test_and_query_no_match(self):
+		valid_query['shared_tickets'] = 'True'
+		res = views.clean_and_execute(valid_query, Organizations)
+		self.assertEqual(res, [])
+
 	def test_data_correction(self):
 		res1 = views.data_corrections(valid_query)
 		self.assertEqual(res1['_id'],101)
@@ -80,16 +89,6 @@ class DBViewsTests(BaseTestCase):
 	def test_validated_general_false(self):
 		res = views.validated_general(["<malicious>{}"])
 		self.assertEqual(res, False)
-
-	def test_and_query_match(self):
-		res = views.clean_and_execute(valid_query, Organizations)
-		self.assertEqual(res[0].name, 'Enthaze')
-
-	def test_and_query_no_match(self):
-		load_data(db.session, test_loc)
-		valid_query['shared_tickets'] = 'True'
-		res = views.clean_and_execute(valid_query, Organizations)
-		self.assertEqual(res, [])
 
 
 class RoutesTests(BaseTestCase):
