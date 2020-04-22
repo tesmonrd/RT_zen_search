@@ -3,6 +3,7 @@ from app import app
 from flask import Flask
 from sqlalchemy.orm import sessionmaker
 from flask_testing import TestCase
+from werkzeug import exceptions
 from rt_zen_search.db_setup import init_db, load_data, add_db_data
 from rt_zen_search.route_bp import bp
 from rt_zen_search import views
@@ -71,8 +72,8 @@ class DBTests(BaseTestCase):
 
 	def test_db_invalid(self):
 		load_data(db.session, test_loc)
-		res = views.process_query(invalid_query)
-		self.assertEqual(res, 400)
+		with self.assertRaises(exceptions.BadRequest):
+			views.process_query(invalid_query)
 
 
 class ViewsTests(BaseTestCase):
@@ -122,5 +123,5 @@ class RoutesTests(BaseTestCase):
 
 	def test_invalid_search_resp(self):
 		res = self.client.get("/search?<script>Malicious;</script>")
-		self.assertIn(res.status_code, 400)
+		self.assertEqual(res.status_code, 400)
 
