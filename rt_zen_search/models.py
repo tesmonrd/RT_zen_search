@@ -1,4 +1,3 @@
-# from app import db
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -6,6 +5,7 @@ db = SQLAlchemy()
 
 class Organizations(db.Model):
     """Define Org query data for data loading/querying in SQLAlchemy."""
+
     __tablename__ = 'organizations'
     __mapper_args__ = {'polymorphic_identity': 'organizations'}
     _id = db.Column(db.Integer, primary_key=True)
@@ -24,6 +24,7 @@ class Organizations(db.Model):
 
 class Users(db.Model):
     """Define User query data for data loading/querying in SQLAlchemy."""
+
     __tablename__ = 'users'
     __mapper_args__ = {'polymorphic_identity': 'users'}
     _id = db.Column(db.Integer, primary_key=True)
@@ -46,13 +47,13 @@ class Users(db.Model):
     suspended = db.Column(db.Boolean)
     role = db.Column(db.String)
 
-
     def __repr__(self):
         return "{}".format(self.name)
 
 
 class Tickets(db.Model):
     """Define Ticket query data for data loading/querying in SQLAlchemy."""
+
     __tablename__ = 'tickets'
     __mapper_args__ = {'polymorphic_identity': 'tickets'}
     _id = db.Column(db.String, primary_key=True)
@@ -74,4 +75,3 @@ class Tickets(db.Model):
 
     def __repr__(self):
         return "{}".format(self.subject)
-
