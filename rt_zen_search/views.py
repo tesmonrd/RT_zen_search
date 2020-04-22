@@ -1,5 +1,6 @@
 import re
 from distutils.util import strtobool
+from flask import abort
 from itertools import chain
 from sqlalchemy import cast, or_, Text
 from sqlalchemy.sql.expression import false, true
@@ -36,9 +37,13 @@ def process_query(query_data):
 			if k in query_data.keys():
 				results = clean_and_execute(query_data, tbl_map[k][0])
 				res_table = [tbl_map[k][1](results)]
-				return res_table		
+				return res_table
+
+	elif not query_data:
+		return None
+
 	else:
-		return "Invalid query sent."
+		abort(400)
 
 
 def clean_and_execute(query_data, db_table):

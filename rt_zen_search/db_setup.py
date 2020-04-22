@@ -19,21 +19,25 @@ def init_db(db_url):
 	try:
 		return Base.metadata.create_all(bind=engine)
 	except SQLAlchemyError:
-		create_tables(db_url)
 		file_loc = ['rt_zen_search/data/' + f for f in os.listdir('rt_zen_search/data')]
-		for json_file in file_loc:
-			if 'organizations' in json_file.lower():
-				add_db_data(db_session, json_file, Organizations)
-			elif 'users' in json_file.lower():
-				add_db_data(db_session, json_file, Users)
-			elif 'tickets' in json_file.lower():
-				add_db_data(db_session, json_file, Tickets)
-			else:
-				print("File type not found for processing")
-				pass
-		db_session.commit()
+		create_tables(db_url)
+		load_data(db_session, file_loc)
 		Base.metadata.create_all(bind=engine)
 
+
+def load_data(db_session, file_path):
+	"""Handle logic for loading data."""
+	for json_file in file_path:
+		if 'organizations' in json_file.lower():
+			add_db_data(db_session, json_file, Organizations)
+		elif 'users' in json_file.lower():
+			add_db_data(db_session, json_file, Users)
+		elif 'tickets' in json_file.lower():
+			add_db_data(db_session, json_file, Tickets)
+		else:
+			print("File type not found for processing")
+			pass
+	db_session.commit()
 
 def add_db_data(db_session, json_data_loc, target_model):
 	"""Extracts JSON and flushes to postgres."""
