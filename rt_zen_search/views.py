@@ -20,15 +20,18 @@ def process_query(query_data):
 	if 'query_all' in query_data and validated_general(query_data['query_all']):
 		results = []
 		if len(query_data['query_all'].split(',')) > 1:
-			multi_search_val = query_data['query_all'].split(',')
+			multi_search_val = [w.strip() for w in query_data['query_all'].split(',')]
 			for s_t in multi_search_val:
-				_new_data = clean_and_execute({'query_all':s_t},[v[0] for k,v in tbl_map.items()])
+				new_data = clean_and_execute({'query_all':s_t},[v[0] for k,v in tbl_map.items()])
 				if not results:
-					results += _new_data
+					results += new_data
 				else:
-					results = [x[0] + x[1] for x in zip(results,_new_data)]
+					results = [x[0] + x[1] for x in zip(results,new_data)]
 		else:
 			results = clean_and_execute(query_data,[v[0] for k,v in tbl_map.items()])
+
+		if not any(results):
+			return None
 		res_table = [OrgTable(results[0]),UserTable(results[1]),TicketTable(results[2])]
 		return res_table
 
@@ -36,10 +39,12 @@ def process_query(query_data):
 		for k in tbl_map.keys():
 			if k in query_data.keys():
 				results = clean_and_execute(query_data, tbl_map[k][0])
+				if not any(results):
+					return None
 				res_table = [tbl_map[k][1](results)]
 				return res_table
 
-	elif not query_data:
+	elif not all(query_data.values()):
 		return None
 
 	else:
@@ -49,33 +54,33 @@ def process_query(query_data):
 def clean_and_execute(query_data, db_table):
 	"""Cleans and calls execution."""
 	if isinstance(db_table,list):
-		_orgs = []
-		_users = []
-		_tickets = []
+		orgs = []
+		users = []
+		tickets = []
 
 		for table in db_table:
-			_column_names = table.__table__.c.keys()
+			column_names = table.__table__.c.keys()
 
 			if table == Tickets:
-				_column_names = ['ticket_id' if x == '_id' else x for x in _column_names]
+				column_names = ['ticket_id' if x == '_id' else x for x in column_names]
 			if 'true' in query_data['query_all'].lower() or 'false' in query_data['query_all'].lower():
-				_column_names = [bool_f for bool_f in _column_names if bool_f in type_bool_mod]
+				column_names = [bool_f for bool_f in column_names if bool_f in type_bool_mod]
 
-			_mapped_data = {k:query_data['query_all'] for k in _column_names}
-			_cleaned_data = data_corrections({k:v for k,v in _mapped_data.items() if v != ''})
+			mapped_data = {k:query_data['query_all'] for k in column_names}
+			cleaned_data = data_corrections({k:v for k,v in mapped_data.items() if v != ''})
 
 			if table.__table__.name == 'organizations':
-				_orgs.append(execute_queries(_cleaned_data,table))
+				orgs.append(execute_queries(cleaned_data,table))
 			elif table.__table__.name == 'users':
-				_users.append(execute_queries(_cleaned_data,table))
+				users.append(execute_queries(cleaned_data,table))
 			elif table.__table__.name == 'tickets':
-				_tickets.append(execute_queries(_cleaned_data,table))
-		result_data = _orgs + _users + _tickets
+				tickets.append(execute_queries(cleaned_data,table))
+		result_data = orgs + users + tickets
 		return result_data
 
 	else:
-		_cleaned_data = data_corrections({k:v for k,v in query_data.items() if v != ''})
-		result_data = execute_queries(_cleaned_data, db_table)
+		cleaned_data = data_corrections({k:v for k,v in query_data.items() if v != ''})
+		result_data = execute_queries(cleaned_data, db_table)
 		return result_data
 
 
@@ -137,7 +142,7 @@ def data_corrections(cleaned_data):
 def validated_general(query_data):
 	"""Basic check for unsafe characters in search."""
 	regex = re.compile('[!#$%^&*()<>?\|}{~:]')
-	if(regex.search(query_data) == None):
+	if query_data and (regex.search(query_data) == None):
 		return True
 	else:
 		return False

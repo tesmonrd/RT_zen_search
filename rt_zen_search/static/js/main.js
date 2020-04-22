@@ -9,4 +9,8 @@ $(document).ready(function(){
         $(".sidebar").show();
     }
   });
+
+  $(".close").click(function(){
+        $(".sidebar").hide();
+  });
 });

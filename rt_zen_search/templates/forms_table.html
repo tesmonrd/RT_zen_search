@@ -2,21 +2,23 @@
 
 {% from "_formhelpers.html" import render_field %}
 {% block search_content %}
-<div class="container-fluid">
 	<div id="mainSearch">
 		<form method="GET" action="/search">
 			<ul>
-			{{ render_field(gen_search.query_all) }}
+			<label id="searchTitle">Search All (please use comma delimited terms)</label>
+			{{ gen_search.query_all }}
 			</ul>
-			<input type=submit><br/>
-			<a id="toggleAdv">Advanced Search</a>
+			<button type=submit class="btn btn-primary btn-sm">Search</button><br/>
+			<button type="button" class="btn btn-link btn-xs" id="toggleAdv">Advanced Search</button>
 		</form>
 	</div>
 	<div class="row">
 		<div class="col-sm-3 col-md-4 sidebar">
+		<button type="button" class="close" aria-label="Close">
+		  <span aria-hidden="true">&times;</span>
+		</button>
 	{% for search_form in forms %}
 		{% if search_form.org_id %}
-		<!-- <button class="filter_option">Organizations</button> -->
 		<div class = "filter_option">
 			<h4>Organization</h4>
 			<form method="GET" action="/search">
@@ -27,11 +29,10 @@
 			 		{% endif %}
 			 	{% endfor %}
 				</ul>
-			 	<input type=submit>
+			 	<button type=submit class="btn btn-primary btn-xs">Search Orgs</button><br/>
 			</form>
-		</div>
+		</div><br/>
 		{% elif search_form.user_id %}
-		<!-- <button class="filter_option">Users</button> -->
 		<div class = "filter_option">
 			<h4>Users</h4>
 			<form method="GET" action="/search">
@@ -42,11 +43,10 @@
 			 		{% endif %}
 			 	{% endfor %}
 				</ul>
-			 	<input type=submit>
+			 	<button type=submit class="btn btn-primary btn-xs">Search Users</button><br/>
 			</form>
-		</div>
+		</div><br/>
 		{% elif search_form.ticket_id%}
-		<!-- <button class="filter_option">Tickets</button> -->
 		<div class = "filter_option">
 			<h4>Tickets</h4>
 			<form method="GET" action="/search">
@@ -57,7 +57,7 @@
 			 		{% endif %}
 			 	{% endfor %}
 				</ul>
-			 	<input type=submit>
+			 	<button type=submit class="btn btn-primary btn-xs">Search Tickets</button><br/>
 			</form>
 		</div>
 		{% endif %}
@@ -65,17 +65,15 @@
 	</div>
 	<div class="main" id="resultsTable">
 		<div class="row">
-	{% if search_results %}
-		{% for res in search_results %}
-			{{res}}
-
-		{% endfor %}
-	{% endif %}
-	{% if msg %}
-		<p>{{ msg }}</p>
-	{% endif %}
+		{% if msg %}
+			<span id="msg">{{ msg }}</span>
+		{% endif %}
+		{% if search_results %}
+			{% for res in search_results %}
+				{{res}}
+			{% endfor %}
+		{% endif %}
+		</div>
 	</div>
-	</div>
-</div>
 </div>
 {% endblock %}

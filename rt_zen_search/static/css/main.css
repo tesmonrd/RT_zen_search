@@ -31,18 +31,38 @@ input#query_all {
   width: 100%;
 }
 
+#searchTitle {
+  font-size: 16px;
+}
+
+#msg {
+  padding-left: 2.5%;
+  font-size: 14px;
+  width: 100%;
+}
+
 .sidebar {
   position: fixed;
-  top: 155px;
+  top: 225px;
   bottom: 0;
   left: 0;
   z-index: 1000;
   display: block;
   padding: 20px;
-  /*overflow-x: hidden;*/
+  max-width: 350px;
   overflow-y: auto;
   background-color: #f5f5f5;
   border-right: 1px solid #eee;
+}
+
+.page-header {
+  padding-left: 2%;
+  padding-top: 2%;
+  font-family: 'Catamaran', sans-serif;
+}
+
+.btn-link {
+  padding-left: 0;
 }
 
 @media (min-width: 768px) {

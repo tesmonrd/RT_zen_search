@@ -22,13 +22,19 @@ def search_results():
 	gen_search = GeneralSearchBar()
 	forms = [OrganizationForm(),UserForm(),TicketForm()]
 	if request.method == 'GET':
-		msg = None
 		data = request.args.to_dict()
 		search_results = process_query(data)
 		if not search_results:
-			msg = 'No results found! (Queryied Data - data:{})'.format([v for v in data.values() if v])
-		if isinstance(search_results, str):
-			msg = search_results
+			msg = 'No results found! (Queried Data - data:{})'.format([v for v in data.values() if v])
+			search_results=None
+		else:
+			res_ct = 0
+			for tbl in search_results:
+				if "No Items" in tbl.__html__():
+					search_results.remove(tbl)
+				else:
+					res_ct += tbl.__html__().count('<tr>') - 1
+			msg = '{} Results found for search {}.'.format(res_ct,[v for v in data.values() if v])
 
 		return render_template('forms_table.html',
 			gen_search=gen_search,
