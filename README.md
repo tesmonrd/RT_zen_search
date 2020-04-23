@@ -10,12 +10,21 @@ Provides a main search bar that will query data that contains ANY data that cont
 ## Installation and Running
 ### Running the app
 *REQUIRES POSTGRESQL (if you don't have it downloaded, please download from: https://www.postgresql.org/download/)*
-1. navigate to a new project directory
+
+1. Navigate to a new project directory
 2. 'git clone' from my master repo: https://github.com/tesmonrd/rt_zen_search.git
-3. initialize you virtual environment of choice and activate it... i use 'python -m venv yourenvname'
-4. load the requirements from requirements.txt using 'pip install -r requirements.txt'
-5. load the environment variables from envs/local.env using 'source envs/local.env'
-6. simply run 'flask run' from your commandline and you're off! Simply browse to your localhost:5000 or 127.0.0.1:5000
+3. Initialize you virtual environment of choice and activate it.
+   * I use 'python -m venv yourenvname' to create the venv.
+   * To activate your virtualenv once you've run the 'venv' create command is : 'source name_of_your_env>/bin/activate'.
+   * To deactivate it, you simply enter 'deactivate'.
+4. Load the requirements from requirements.txt using 'pip install -r requirements.txt'
+   * If you run into a psycopg2 error at this step, there are postgresql dependencies missing in your OS. Please follow these steps:
+      * MacOSX (fixed it for me) - run 'brew install postgresql' outside of the virtualenv
+      * Linux/Ubuntu - run 'sudo apt-get install libpq-dev python-dev' inside of the virtualenv
+      * CentOS - run 'sudo yum install postgresql postgresql-devel python-devel'
+   * fix source: https://stackoverflow.com/questions/11618898/pg-config-executable-not-found
+5. Load the environment variables from envs/local.env using 'source envs/local.env'
+6. Simply run 'flask run' from your commandline and you're off! Simply browse to your localhost:5000 or 127.0.0.1:5000
 
 ### Running Tests
 1. Once steps are completed for running the app, execute tests by running 'python -m unittest discover'
