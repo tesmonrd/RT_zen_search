@@ -23,7 +23,7 @@ class BaseTestCase(TestCase):
 	def create_app(self):
 		app = Flask(__name__, template_folder='../templates')
 		app.config.from_object('config.TestConfig')
-		init_db(app.config['SQLALCHEMY_DATABASE_URI'])
+		init_db()
 		db.init_app(app)
 		app.register_blueprint(bp)
 		client = app.test_client()

@@ -9,7 +9,7 @@ app = Flask(
 	template_folder='rt_zen_search/templates',
 	static_folder='rt_zen_search/static')
 app.config.from_object('config.AppConfig')
-init_db(app.config['SQLALCHEMY_DATABASE_URI'])
+init_db()
 db.init_app(app)
 app.register_blueprint(bp)
 

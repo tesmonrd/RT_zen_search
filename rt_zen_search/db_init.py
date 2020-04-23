@@ -1,9 +1,10 @@
+import os
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy import Column, Integer, String, Boolean, ARRAY
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy_utils import database_exists, create_database
 
 
+engine = create_engine(os.environ['DATABASE_URL'], echo=True)
 Base = declarative_base()
 
 
@@ -78,9 +79,5 @@ class Tickets(Base):
         return "{}".format(self.subject)
 
 
-def create_tables(db_url):
-    engine = create_engine(db_url, echo=False)
-    if not database_exists(engine.url):
-        create_database(engine.url)
-
+def create_tables():
     Base.metadata.create_all(engine)
